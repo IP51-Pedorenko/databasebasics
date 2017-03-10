@@ -94,7 +94,7 @@ SELECT "OrderID"
       ,"ShipperID"
       ,CASE
   WHEN "ShipperID" = 3
-  THEN 'Andrii Pedorenko Victorovich'
+  THEN 'Andrii'
   ELSE "CompanyName"
   END
       ,"Phone"
@@ -130,21 +130,16 @@ WHERE "OrderID" IN (SELECT "OrderID" FROM TooManyProducts
                    WHERE "Discount" = (SELECT MAX("Discount")FROM TooManyProducts));
 
 --- part 5 ---
-WITH employeeregion AS
-(SELECT "EmployeeID", "RegionDescription"
+WITH southernproducts AS
+(SELECT DISTINCT "ProductName"
 FROM employeeterritories JOIN
   territories AS tts ON tts."TerritoryID" =employeeterritories."TerritoryID" JOIN
-  region AS rg ON rg."RegionID" = tts."RegionID")
+  region AS rg ON rg."RegionID" = tts."RegionID" JOIN
+  orders AS os ON os."EmployeeID" = employeeterritories."EmployeeID" JOIN
+  order_details AS od ON od."OrderID" = os."OrderID" JOIN
+  products AS pds ON pds."ProductID" = od."ProductID"
+  WHERE "RegionDescription" = 'Southern')
 
-,notnorthrenemployee AS (SELECT *
-FROM employeeregion
-  EXCEPT
-  SELECT *
-  FROM employeeregion
-  WHERE "RegionDescription" = 'Northern')
-
-SELECT DISTINCT "ProductName"
-FROM orders JOIN
-notnorthrenemployee AS nne ON nne."EmployeeID" = orders."EmployeeID" JOIN
-order_details AS od ON od."OrderID" = orders."OrderID" JOIN
-products AS pds ON pds."ProductID" = od."ProductID";
+SELECT "ProductName" FROM products
+EXCEPT
+  SELECT "ProductName" FROM southernproducts;
