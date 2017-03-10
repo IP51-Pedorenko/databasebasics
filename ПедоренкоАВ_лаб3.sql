@@ -1,10 +1,11 @@
 --- Task 1 ---
 --- part 1 ---
-SELECT 'Andrii'
+SELECT 'Andrii Pedorenko Victorovich' AS fullname
 UNION
-SELECT 'Pedorenko'
-UNION
-SELECT 'Victorovich';
+SELECT 'Andrii Pedorenko Victorovich' AS fullname;
+
+--- second variant
+SELECT FullName FROM (SELECT 'Andrii Pedorenko Victorovich' as FullName) AS MyName;
 
 --- part 2 ---
 SELECT
