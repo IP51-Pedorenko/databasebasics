@@ -1,3 +1,12 @@
+--- Task 1 ---
+CREATE OR REPLACE FUNCTION MY_NAME() RETURNS VARCHAR(50) AS $$
+  BEGIN
+    RETURN('Pedorenko Andrii Victorovich');
+  END;
+  $$ LANGUAGE plpgsql;
+
+SELECT MY_NAME();
+
 --- Task 2 ---
 CREATE OR REPLACE FUNCTION GET_EMPLOYEES_BY_SEX(SEX VARCHAR(1)) RETURNS SETOF employees AS $$
   BEGIN
