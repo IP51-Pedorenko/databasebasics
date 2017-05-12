@@ -8,24 +8,26 @@ CREATE OR REPLACE FUNCTION MY_NAME() RETURNS VARCHAR(50) AS $$
 SELECT MY_NAME();
 
 --- Task 2 ---
-CREATE OR REPLACE FUNCTION GET_EMPLOYEES_BY_SEX(SEX VARCHAR(1)) RETURNS SETOF employees AS $$
+CREATE OR REPLACE FUNCTION GET_EMPLOYEES_BY_SEX(SEX VARCHAR(1)) RETURNS SETOF text AS $$
+  DECLARE 
+    employee employees%rowtype;
   BEGIN
-    IF (SEX = 'F') THEN
-      RETURN QUERY SELECT *
-                   FROM employees
-                   WHERE "TitleOfCourtesy" = 'Ms.' OR "TitleOfCourtesy" = 'Mrs.';
+    FOR employee IN SELECT * FROM employees
+    LOOP
+    IF (SEX = 'F' AND employee."TitleOfCourtesy" IN ('Ms.', 'Mrs')) THEN
+      RETURN NEXT employee."FirstName" || ' ' || employee."LastName";
+    ELSIF (SEX = 'M' AND employee."TitleOfCourtesy" IN ('Dr.', 'Mr.')) THEN
+      RETURN NEXT employee."FirstName" || ' ' || employee."LastName";
+    ELSIF NOT (SEX IN ('F', 'M')) THEN
+      RETURN NEXT 'Wrong input.';
+      EXIT;
     END IF;
-    IF (SEX = 'M') THEN
-      RETURN QUERY SELECT *
-                   FROM employees
-                   WHERE "TitleOfCourtesy" = 'Mr.' OR "TitleOfCourtesy" = 'Dr.';
-    END IF;
-
+    END LOOP;
     RETURN;
   END;
   $$ LANGUAGE plpgsql;
 
-SELECT * FROM GET_EMPLOYEES_BY_SEX('M');
+SELECT * FROM GET_EMPLOYEES_BY_SEX('F');
 
 --- Task 3 ---
 CREATE OR REPLACE
